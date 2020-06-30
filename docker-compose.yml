@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  number:
+    image: 'docker.io/gforceman/number:0.1'
+    ports:
+      - "5000:5000"
+    networks:
+      - app-tier
+    depends_on:
+      - mongodb
+  mongodb:
+    image: 'docker.io/bitnami/mongodb:4.2-debian-10'
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'mongodb_data:/bitnami/mongodb'
+      - './mongodb:/docker-entrypoint-initdb.d'
+    networks:
+      - app-tier
+    environment:
+      - MONGODB_INITSCRIPTS_DIR=/docker-entrypoint-initdb.d
+  
+volumes:
+  mongodb_data:
+    driver: local
+    
+networks:
+  app-tier:
+    driver: bridge
